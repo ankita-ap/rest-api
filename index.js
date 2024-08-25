@@ -1,25 +1,22 @@
 const express = require('express');
-const app = express(); 
+const app = express();
 const PORT = process.env.PORT || 8080;
 
 app.use(express.json());
-
 
 const findHighestLowercase = (arr) => {
     const lowercaseAlphabets = arr.filter(char => char >= 'a' && char <= 'z');
     return lowercaseAlphabets.sort().reverse()[0] || null;
 };
 
-
-app.get('/endpoint', (req, res) => {
-    const operationCode = 'OPERATION_85432'; 
+app.get('/bfhl', (req, res) => {
+    const operationCode = 'OPERATION_85432';
     res.status(200).send({
         operation_code: operationCode
     });
 });
 
-
-app.post('/endpoint', (req, res) => {
+app.post('/bfhl', (req, res) => {
     const { user_id, college_email_id, college_roll_number, input_array } = req.body;
 
     if (!user_id || !college_email_id || !college_roll_number || !input_array) {
@@ -28,13 +25,25 @@ app.post('/endpoint', (req, res) => {
         });
     }
 
+
+    const [firstName, lastName, dob] = user_id.split('_');
+    
+    
+    if (!dob || dob.length !== 8) {
+        return res.status(400).send({ 
+            message: 'user_id should be in the format first_name_last_name_ddmmyyyy.'
+        });
+    }
+    
+    const formattedDob = dob; 
+
     const numbersArray = input_array.filter(item => typeof item === 'number');
     const alphabetsArray = input_array.filter(item => typeof item === 'string' && /^[a-zA-Z]$/.test(item));
     const highestLowercaseAlphabet = findHighestLowercase(alphabetsArray);
 
     res.status(200).send({
         status: 'Success',
-        user_id: user_id,
+        user_id: `${firstName}_${lastName}_${formattedDob}`,
         college_email_id: college_email_id,
         college_roll_number: college_roll_number,
         numbers: numbersArray,
