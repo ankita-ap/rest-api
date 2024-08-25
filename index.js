@@ -10,9 +10,8 @@ const findHighestLowercase = (arr) => {
 };
 
 app.get('/bfhl', (req, res) => {
-    const operationCode = 'OPERATION_85432';
     res.status(200).send({
-        operation_code: operationCode
+        operation_code: 1
     });
 });
 
@@ -25,9 +24,7 @@ app.post('/bfhl', (req, res) => {
         });
     }
 
-
     const [firstName, lastName, dob] = user_id.split('_');
-    
     
     if (!dob || dob.length !== 8) {
         return res.status(400).send({ 
@@ -35,15 +32,13 @@ app.post('/bfhl', (req, res) => {
         });
     }
     
-    const formattedDob = dob; 
-
     const numbersArray = input_array.filter(item => typeof item === 'number');
     const alphabetsArray = input_array.filter(item => typeof item === 'string' && /^[a-zA-Z]$/.test(item));
     const highestLowercaseAlphabet = findHighestLowercase(alphabetsArray);
 
     res.status(200).send({
         status: 'Success',
-        user_id: `${firstName}_${lastName}_${formattedDob}`,
+        user_id: `${firstName}_${lastName}_${dob}`,
         college_email_id: college_email_id,
         college_roll_number: college_roll_number,
         numbers: numbersArray,
